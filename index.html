@@ -1,14 +1,22 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri + React + Typescript</title>
+    <title>Moss Upscaler</title>
+    <style>
+      /* Minimal inline styles to match dark theme before CSS loads */
+      html, body { height: 100%; background-color: #111214; color: #e5e7eb; }
+      #root { min-height: 100%; }
+      .splash { display: flex; align-items: center; justify-content: center; height: 100%; opacity: 0.9; }
+      .splash-dot { width: 8px; height: 8px; border-radius: 9999px; background: #3b82f6; animation: pulse 1s infinite ease-in-out; }
+      @keyframes pulse { 0%, 100% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } }
+    </style>
   </head>
 
-  <body>
-    <div id="root"></div>
+  <body class="bg-background text-foreground">
+    <div id="root"><div class="splash"><div class="splash-dot"></div></div></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

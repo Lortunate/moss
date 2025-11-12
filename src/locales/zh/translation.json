@@ -1,0 +1,44 @@
+{
+  
+  "common": {
+    "source": "源码",
+    "notSelected": "未选择",
+    "close": "关闭",
+    "deleteFile": "删除文件",
+    "startProcessing": "开始处理",
+    "stopProcessing": "停止",
+    "clearAll": "清空全部"
+  },
+  "language": { "label": "语言", "en": "English", "zh": "中文" },
+  "status": { "complete": "完成", "processing": "处理中", "ready": "就绪", "error": "错误" },
+  "model": { "title": "模型", "select": { "label": "选择模型" } },
+  "sidebar": { "scale": { "title": "放大倍数", "current": "当前：{{value}}x" } },
+  "output": {
+    "title": "输出",
+    "location": "位置",
+    "select": { "placeholder": "选择输出位置" },
+    "locationOptions": { "original": "原图所在目录", "custom": "自定义输出目录" },
+    "directory": "目录",
+    "openDirAria": "打开目录",
+    "overwriteOriginals": "覆盖原始文件"
+  },
+  "dropzone": {
+    "prompt": "拖拽图片到此处，或点击添加",
+    "addImages": "添加图片",
+    "importFromFolder": "从文件夹导入",
+    "ignoredNonImages": "已忽略 {{count}} 个非图片文件",
+    "emptyOrUnsupported": "目标目录为空或不包含受支持的图片文件",
+    "addedNFiles": "已添加 {{count}} 个文件",
+    "readDirFailed": "目录读取失败，请检查权限或路径",
+    "scanningDir": "正在扫描目录…"
+  },
+  "models": {
+    "real-esrgan-x4": {
+      "description": "高保真通用 x4 放大模型，适合多数照片场景。"
+    },
+    "real-esrgan-anime-x4": {
+      "description": "针对二次元/动漫线条与平涂优化的 x4 模型。"
+    },
+    "scenes": { "general": "通用", "anime": "动漫" }
+  }
+}

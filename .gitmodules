@@ -1,0 +1,3 @@
+[submodule "moss-model"]
+	path = moss-model
+	url = https://github.com/Lortunate/moss-model
