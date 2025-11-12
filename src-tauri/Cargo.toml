@@ -37,6 +37,9 @@ moss-model = { path = "../moss-model" }
 cocoa = "0.26.1"
 moss-model = { path = "../moss-model", features = ["macos"] }
 
+[profile.dev]
+incremental = true
+
 [profile.release]
 codegen-units = 1
 lto = true
