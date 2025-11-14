@@ -74,12 +74,23 @@ def cmd_build(args):
     subprocess.run(cmd, check=True)
 
 
+def _normalize_arch(machine: str) -> str:
+    m = machine.lower()
+    if m in ("x86_64", "amd64"):
+        return "x86_64"
+    if m in ("arm64", "aarch64"):
+        return "arm64"
+    return machine
+
+
 def prefix_paths(workspace: str, version: str, modules_hash: str) -> tuple[str, str, str]:
     os_name = platform.system()
-    arch = platform.machine()
+    arch = _normalize_arch(platform.machine())
     root = os.path.join(workspace, ".opencv", version, modules_hash)
     prefix = os.path.join(root, os_name, arch)
     include_path = os.path.join(prefix, "include", "opencv4")
+    if not os.path.isdir(include_path):
+        include_path = os.path.join(prefix, "include", "opencv2")
     lib_path = os.path.join(prefix, "lib")
     return prefix, include_path, lib_path
 
