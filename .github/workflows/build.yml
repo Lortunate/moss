@@ -55,6 +55,8 @@ jobs:
       build_list: ${{ needs.config.outputs.build_list }}
 
   tauri-build:
+    permissions:
+      contents: write
     needs: [config, opencv-ubuntu, opencv-windows]
     timeout-minutes: 60
     strategy:
@@ -99,6 +101,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libfuse2
       - name: Install LLVM and Clang
         uses: KyleMayes/install-llvm-action@v2
         with:
