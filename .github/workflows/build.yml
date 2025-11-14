@@ -101,7 +101,6 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-          sudo apt install -y fuse3 libfuse3-3
       - name: Install LLVM and Clang
         uses: KyleMayes/install-llvm-action@v2
         with:
@@ -123,6 +122,7 @@ jobs:
       - name: build app with tauri-action
         uses: tauri-apps/tauri-action@v0
         env:
+          NO_STRIP: true
           RUST_BACKTRACE: 1
           CARGO_INCREMENTAL: 0
           CARGO_TERM_COLOR: always
