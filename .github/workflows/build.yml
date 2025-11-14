@@ -1,0 +1,121 @@
+name: build
+on:
+  push:
+    branches:
+      - master
+      - devs/*
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: moss-${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      opencv_version: ${{ steps.cfg.outputs.opencv_version }}
+      build_list: ${{ steps.cfg.outputs.build_list }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: true
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read OpenCV config
+        id: cfg
+        run: |
+          python3 .github/tools/opencv_ci.py read-config \
+            --config ".github/opencv-config.json" \
+            --github-output "$GITHUB_OUTPUT"
+  opencv-macos:
+    needs: config
+    uses: ./.github/workflows/build-opencv.yml
+    with:
+      runner: macos-latest
+      opencv_version: ${{ needs.config.outputs.opencv_version }}
+      build_list: ${{ needs.config.outputs.build_list }}
+
+  opencv-ubuntu:
+    needs: config
+    uses: ./.github/workflows/build-opencv.yml
+    with:
+      runner: ubuntu-latest
+      opencv_version: ${{ needs.config.outputs.opencv_version }}
+      build_list: ${{ needs.config.outputs.build_list }}
+
+  opencv-windows:
+    needs: config
+    uses: ./.github/workflows/build-opencv.yml
+    with:
+      runner: windows-latest
+      opencv_version: ${{ needs.config.outputs.opencv_version }}
+      build_list: ${{ needs.config.outputs.build_list }}
+
+  tauri-build:
+    needs: [opencv-macos, opencv-ubuntu, opencv-windows]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest'
+            args: '--target aarch64-apple-darwin'
+          - platform: 'macos-latest'
+            args: '--target x86_64-apple-darwin'
+          - platform: 'ubuntu-22.04'
+            args: ''
+          - platform: 'windows-latest'
+            args: ''
+    runs-on: ${{ matrix.platform }}
+    env:
+      OPENCV_LINK_LIBS: ${{ (matrix.platform == 'macos-latest' && needs.opencv-macos.outputs.opencv_link_libs) || (matrix.platform == 'ubuntu-22.04' && needs.opencv-ubuntu.outputs.opencv_link_libs) || needs.opencv-windows.outputs.opencv_link_libs }}
+      OPENCV_LINK_PATHS: ${{ (matrix.platform == 'macos-latest' && needs.opencv-macos.outputs.opencv_link_paths) || (matrix.platform == 'ubuntu-22.04' && needs.opencv-ubuntu.outputs.opencv_link_paths) || needs.opencv-windows.outputs.opencv_link_paths }}
+      OPENCV_INCLUDE_PATHS: ${{ (matrix.platform == 'macos-latest' && needs.opencv-macos.outputs.opencv_include_paths) || (matrix.platform == 'ubuntu-22.04' && needs.opencv-ubuntu.outputs.opencv_include_paths) || needs.opencv-windows.outputs.opencv_include_paths }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: true
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v2
+        with:
+          version: "17"
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - name: install frontend dependencies
+        run: bun install
+      - name: build app with tauri-action
+        uses: tauri-apps/tauri-action@v0
+        env:
+          RUST_BACKTRACE: 1
+          CARGO_TERM_COLOR: always
+        with:
+          args: ${{ matrix.args }} -- -vv
+      - name: Tree workspace
+        if: ${{ failure() }}
+        run: ls -la
