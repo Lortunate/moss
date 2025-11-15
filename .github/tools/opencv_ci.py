@@ -91,7 +91,14 @@ def prefix_paths(workspace: str, version: str, modules_hash: str) -> tuple[str, 
     include_path = os.path.join(prefix, "include", "opencv4")
     if not os.path.isdir(include_path):
         include_path = os.path.join(prefix, "include", "opencv2")
-    lib_path = os.path.join(prefix, "lib")
+    candidates = [
+        os.path.join(prefix, "x64", "vc17", "lib"),
+        os.path.join(prefix, "x64", "vc16", "lib"),
+        os.path.join(prefix, "x64", "vc15", "lib"),
+        os.path.join(prefix, "lib"),
+        os.path.join(prefix, "x64", "mingw", "lib"),
+    ]
+    lib_path = next((p for p in candidates if os.path.isdir(p)), candidates[0])
     return prefix, include_path, lib_path
 
 
