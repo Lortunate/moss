@@ -139,7 +139,7 @@ def configure_build_install(opts: BuildOptions, arch: str) -> None:
         *common_cmake_args(opts, arch),
     ]
     run(base_cmd, opts.dry_run)
-    run(["cmake", "--build", str(build_dir), "--config", opts.build_type, "--", f"-j{cpu_count()}"], opts.dry_run)
+    run(["cmake", "--build", str(build_dir), "--config", opts.build_type, "--parallel", str(cpu_count())], opts.dry_run)
     run(["cmake", "--install", str(build_dir)], opts.dry_run)
 
 
