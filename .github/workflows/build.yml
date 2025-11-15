@@ -104,7 +104,7 @@ jobs:
       - name: Install LLVM and Clang
         uses: KyleMayes/install-llvm-action@v2
         with:
-          version: '17'
+          version: '19'
       - name: setup bun
         uses: oven-sh/setup-bun@v1
         with:
