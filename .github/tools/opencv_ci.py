@@ -90,7 +90,7 @@ def prefix_paths(workspace: str, version: str, modules_hash: str) -> tuple[str, 
     prefix = os.path.join(root, os_name, arch)
     include_path = os.path.join(prefix, "include", "opencv4")
     if not os.path.isdir(include_path):
-        include_path = os.path.join(prefix, "include", "opencv2")
+        include_path = os.path.join(prefix, "include")
     candidates = [
         os.path.join(prefix, "x64", "vc17", "lib"),
         os.path.join(prefix, "x64", "vc16", "lib"),
@@ -102,14 +102,33 @@ def prefix_paths(workspace: str, version: str, modules_hash: str) -> tuple[str, 
     return prefix, include_path, lib_path
 
 
-def lib_names(build_list: str) -> str:
-    return ",".join([f"opencv_{m}" for m in build_list.split(",")])
+def lib_names(build_list: str, lib_path: str) -> str:
+    os_name = platform.system()
+    modules = set(build_list.split(","))
+    names: list[str] = []
+    try:
+        if os_name == "Windows":
+            for entry in os.listdir(lib_path):
+                if entry.endswith(".lib") and entry.startswith("opencv_"):
+                    base = entry[:-4]
+                    # filter by requested modules
+                    for m in modules:
+                        if base.startswith(f"opencv_{m}"):
+                            names.append(base)
+                            break
+        else:
+            # Default mapping for non-Windows platforms
+            names = [f"opencv_{m}" for m in modules]
+    except Exception:
+        # Fallback to default mapping on any error
+        names = [f"opencv_{m}" for m in modules]
+    return ",".join(sorted(set(names)))
 
 
 def cmd_export_env(args):
     workspace = workspace_path(args.workspace)
     _, include_path, lib_path = prefix_paths(workspace, args.opencv_version, args.modules_hash)
-    libs = lib_names(args.build_list)
+    libs = lib_names(args.build_list, lib_path)
     write_outputs(args.github_output, {
         "opencv_link_libs": libs,
         "opencv_link_paths": lib_path,
