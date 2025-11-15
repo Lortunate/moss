@@ -83,7 +83,9 @@ def read_modules_list(project_root: Path, modules_cli: list[str] | None) -> list
     return valid or items
 
 
-def cmake_generator_args() -> list[str]:
+def cmake_generator_args(os_name: str) -> list[str]:
+    if os_name == "Windows":
+        return ["-G", "Visual Studio 17 2022"]
     return ["-G", "Ninja"] if shutil.which("ninja") else []
 
 
@@ -118,6 +120,8 @@ def common_cmake_args(opts: BuildOptions, arch: str) -> list[str]:
         args.append("-DCMAKE_OSX_ARCHITECTURES=" + arch)
         if opts.deployment_target:
             args.append("-DCMAKE_OSX_DEPLOYMENT_TARGET=" + opts.deployment_target)
+    if opts.os_name == "Windows":
+        args.extend(["-A", "x64", "-T", "v143"])
     return args
 
 
@@ -125,7 +129,7 @@ def configure_build_install(opts: BuildOptions, arch: str) -> None:
     build_dir = configure_dir(opts, arch)
     if build_dir.exists():
         shutil.rmtree(build_dir)
-    gen = cmake_generator_args()
+    gen = cmake_generator_args(opts.os_name)
     base_cmd = [
         "cmake",
         "-S",
