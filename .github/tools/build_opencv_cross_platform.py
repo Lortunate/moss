@@ -114,7 +114,6 @@ def common_cmake_args(opts: BuildOptions, arch: str) -> list[str]:
         "-DOPENCV_FORCE_3RDPARTY_BUILD=ON",
         "-DWITH_PROTOBUF=ON",
         "-DBUILD_PROTOBUF=ON",
-        "-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -I" + str(opts.project_root / "3rdparty/protobuf/src"),
     ]
     if opts.os_name == "Darwin":
         args.append("-DCMAKE_OSX_ARCHITECTURES=" + arch)
