@@ -1,0 +1,133 @@
+name: build
+on:
+  push:
+    branches:
+      - master
+      - devs/*
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: moss-${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      opencv_version: ${{ steps.cfg.outputs.opencv_version }}
+      build_list: ${{ steps.cfg.outputs.build_list }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: true
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read OpenCV config
+        id: cfg
+        run: |
+          python3 .github/tools/opencv_ci.py read-config \
+            --config ".github/opencv-config.json" \
+            --github-output "$GITHUB_OUTPUT"
+
+  opencv-ubuntu:
+    needs: config
+    uses: ./.github/workflows/build-opencv.yml
+    with:
+      runner: ubuntu-22.04
+      opencv_version: ${{ needs.config.outputs.opencv_version }}
+      build_list: ${{ needs.config.outputs.build_list }}
+
+  opencv-windows:
+    needs: config
+    uses: ./.github/workflows/build-opencv.yml
+    with:
+      runner: windows-latest
+      opencv_version: ${{ needs.config.outputs.opencv_version }}
+      build_list: ${{ needs.config.outputs.build_list }}
+
+  tauri-build:
+    permissions:
+      contents: write
+    needs: [config, opencv-ubuntu, opencv-windows]
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'ubuntu-22.04'
+            args: ''
+          - platform: 'windows-latest'
+            args: ''
+    runs-on: ${{ matrix.platform }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      OPENCV_MODULES_HASH: ${{ (matrix.platform == 'macos-latest' && needs.opencv-macos.outputs.modules_hash) || (matrix.platform == 'ubuntu-22.04' && needs.opencv-ubuntu.outputs.modules_hash) || needs.opencv-windows.outputs.modules_hash }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: true
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download OpenCV artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: opencv-${{ runner.os }}-${{ needs.config.outputs.opencv_version }}-${{ env.OPENCV_MODULES_HASH }}
+          path: ${{ github.workspace }}/.opencv/${{ needs.config.outputs.opencv_version }}/${{ env.OPENCV_MODULES_HASH }}
+      - name: Export OpenCV env
+        id: export
+        run: |
+          python3 .github/tools/opencv_ci.py export-env \
+            --workspace "$GITHUB_WORKSPACE" \
+            --opencv-version "${{ needs.config.outputs.opencv_version }}" \
+            --modules-hash "${{ env.OPENCV_MODULES_HASH }}" \
+            --build-list "${{ needs.config.outputs.build_list }}" \
+            --github-output "$GITHUB_OUTPUT"
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt update
+          sudo apt install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v2
+        with:
+          version: '19'
+      - name: setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ contains(matrix.args, 'aarch64-apple-darwin') && 'aarch64-apple-darwin' || (contains(matrix.args, 'x86_64-apple-darwin') && 'x86_64-apple-darwin' || '') }}
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - name: install frontend dependencies
+        run: bun install
+      - name: build app with tauri-action
+        uses: tauri-apps/tauri-action@v0
+        env:
+          NO_STRIP: true
+          RUST_BACKTRACE: 1
+          CARGO_INCREMENTAL: 0
+          CARGO_TERM_COLOR: always
+          OPENCV_LINK_LIBS: ${{ steps.export.outputs.opencv_link_libs }}
+          OPENCV_LINK_PATHS: ${{ steps.export.outputs.opencv_link_paths }}
+          OPENCV_INCLUDE_PATHS: ${{ steps.export.outputs.opencv_include_paths }}
+        with:
+          args: ${{ matrix.args }} -- -vv
