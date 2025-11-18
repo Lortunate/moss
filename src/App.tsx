@@ -8,14 +8,13 @@ import {useProcessing} from "@/hooks/useProcessing";
 import {useTranslation} from "react-i18next";
 import {desktopDir, join} from "@tauri-apps/api/path";
 import {ScrollArea} from "@/components/ui/scroll-area";
-import {Progress} from "@/components/ui/progress";
 
 
 function AppInner() {
   const {state, dispatch} = useAppStore();
   useTranslation();
   const [model, setModel] = useState("real-esrgan-x4");
-  const [scale, setScale] = useState(2);
+  const [scale, setScale] = useState(4);
   const [mode, setMode] = useState<"original" | "custom">("original");
   const [dir, setDir] = useState<string>("");
   const [overwrite, setOverwrite] = useState<boolean>(false);
@@ -75,37 +74,6 @@ function AppInner() {
         animate={{y: 0}}
         transition={{duration: 0.25}}
       >
-        <AnimatePresence>
-          {state.isProcessing && (
-            <motion.div
-              key="global-processing-banner"
-              className="mb-3 px-3 py-2 rounded-2xl bg-primary/10 text-primary text-sm flex items-center gap-3"
-              initial={{opacity: 0, y: -6}}
-              animate={{opacity: 1, y: 0}}
-              exit={{opacity: 0, y: -6}}
-              transition={{duration: 0.18}}
-            >
-              <span className="size-2 rounded-full bg-primary animate-pulse"/>
-              <div className="flex-1">
-                <Progress
-                  className="h-2 rounded-2xl bg-primary/20"
-                  value={(function () {
-                    const total = state.images.length;
-                    const processed = state.images.filter(i => i.status === "complete" || i.status === "error").length;
-                    return total ? Math.round(processed / total * 100) : 0;
-                  })()}
-                />
-              </div>
-              <div className="text-xs text-muted-foreground whitespace-nowrap">
-                {(function () {
-                  const total = state.images.length;
-                  const processed = state.images.filter(i => i.status === "complete" || i.status === "error").length;
-                  return `${processed} / ${total}`;
-                })()}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
         <AnimatePresence mode="wait">
           {state.images.length === 0 ? (
             <motion.div
@@ -127,7 +95,7 @@ function AppInner() {
               />
             </motion.div>
           ) : (
-            <ScrollArea className="h-full w-full rounded-md border">
+            <ScrollArea className="h-full w-full rounded-md">
               <motion.div
                 key="gallery"
                 className="min-h-full p-4"
