@@ -144,7 +144,7 @@ function CompareModal({ selected, origSrc, resultSrc, onClose }: { selected: Ima
   return createPortal(
     <motion.div className="fixed inset-0 z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <motion.div
-        className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-black/45 backdrop-blur-md"
         onClick={onClose}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -158,7 +158,7 @@ function CompareModal({ selected, origSrc, resultSrc, onClose }: { selected: Ima
         onClick={onClose}
       >
         <motion.div
-          className="w-[min(98vw,1200px)] max-h-[92vh] rounded-xl border border-border bg-card/95 shadow-lg overflow-hidden"
+          className="w-[min(98vw,1200px)] max-h-[92vh] rounded-xl border border-border bg-card/70 backdrop-blur-xl shadow-lg overflow-hidden"
           onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, y: 10, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
