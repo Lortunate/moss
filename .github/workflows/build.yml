@@ -6,9 +6,35 @@ on:
       - devs/*
     tags:
       - 'v*'
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - '.prettier*'
+      - '.vscode/**'
+      - 'assets/**'
+      - '**/*.png'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.gif'
+      - '**/*.svg'
   pull_request:
     branches:
       - master
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - '.prettier*'
+      - '.vscode/**'
+      - 'assets/**'
+      - '**/*.png'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.gif'
+      - '**/*.svg'
   workflow_dispatch:
 
 permissions:
