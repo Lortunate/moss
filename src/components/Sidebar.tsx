@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
- 
-import { Slider } from "@/components/ui/slider";
-import { ProcessingControls } from "@/components/ProcessingControls";
-import { OutputSettings } from "@/components/OutputSettings";
-import { useAppStore } from "@/state/app-store";
-import { ModelSelectDialog } from "@/components/ModelSelectDialog";
-import { MODELS } from "@/lib/models";
-import { useTranslation } from "react-i18next";
-import { useAppVersion } from "@/hooks/useAppVersion";
- 
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+
+import {Slider} from "@/components/ui/slider";
+import {ProcessingControls} from "@/components/ProcessingControls";
+import {OutputSettings} from "@/components/OutputSettings";
+import {useAppStore} from "@/state/app-store";
+import {ModelSelectDialog} from "@/components/ModelSelectDialog";
+import {MODELS} from "@/lib/models";
+import {useTranslation} from "react-i18next";
+import {useAppVersion} from "@/hooks/useAppVersion";
+
 
 type Mode = "original" | "custom";
 
@@ -29,26 +29,42 @@ export type SidebarProps = {
   setOverwrite: (v: boolean) => void;
 };
 
-export function Sidebar({ onStart, onStop, onClear, model, setModel, scale, setScale, mode, setMode, dir, setDir, overwrite, setOverwrite }: SidebarProps) {
-  const { state } = useAppStore();
-  const { t } = useTranslation();
+export function Sidebar(
+  {
+    onStart,
+    onStop,
+    onClear,
+    model,
+    setModel,
+    scale,
+    setScale,
+    mode,
+    setMode,
+    dir,
+    setDir,
+    overwrite,
+    setOverwrite
+  }: SidebarProps
+) {
+  const {state} = useAppStore();
+  const {t} = useTranslation();
   const appVersion = useAppVersion();
   return (
     <aside className="w-80 h-full shrink-0 border-r border-border bg-sidebar/95 p-4 flex flex-col overflow-y-auto">
-      <div className="space-y-4">
-        <h1 className="text-lg font-semibold tracking-tight">{t("app.title")}</h1>
+      <div style={{marginTop: "24px"}} className="space-y-4">
+        <h1 style={{marginLeft: "4px"}} className="text-lg font-semibold tracking-tight">{t("app.title")}</h1>
 
         <Card className="bg-card border border-border/20">
           <CardHeader>
             <CardTitle className="text-base">{t("model.title")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ModelSelectDialog models={MODELS} selectedId={model} onSelect={setModel} />
+            <ModelSelectDialog models={MODELS} selectedId={model} onSelect={setModel}/>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">{t("sidebar.scale.title")}</span>
-                <span className="text-muted-foreground">{t("sidebar.scale.current", { value: scale })}</span>
+                <span className="text-muted-foreground">{t("sidebar.scale.current", {value: scale})}</span>
               </div>
               <Slider
                 value={[scale]}
@@ -67,16 +83,20 @@ export function Sidebar({ onStart, onStop, onClear, model, setModel, scale, setS
           </CardContent>
         </Card>
 
-        <OutputSettings mode={mode} setMode={setMode} dir={dir} setDir={setDir} overwrite={overwrite} setOverwrite={setOverwrite} />
+        <OutputSettings mode={mode} setMode={setMode} dir={dir} setDir={setDir} overwrite={overwrite}
+                        setOverwrite={setOverwrite}/>
 
-        <ProcessingControls canStart={state.images.length > 0} onStart={onStart} isProcessing={state.isProcessing} onStop={onStop} onClear={onClear} />
+        <ProcessingControls canStart={state.images.length > 0} onStart={onStart} isProcessing={state.isProcessing}
+                            onStop={onStop} onClear={onClear}/>
       </div>
 
-      <div className="mt-auto border-t border-border/20 pt-3 flex items-center justify-between text-xs text-muted-foreground">
+      <div
+        className="mt-auto border-t border-border/20 pt-3 flex items-center justify-between text-xs text-muted-foreground">
         <span>{appVersion ? `v${appVersion}` : ""}</span>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild>
-            <a href="https://github.com/Lortunate/moss" target="_blank" rel="noopener noreferrer">{t("common.source")}</a>
+            <a href="https://github.com/Lortunate/moss" target="_blank"
+               rel="noopener noreferrer">{t("common.source")}</a>
           </Button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 use log::LevelFilter;
+use tauri_plugin_decorum::WebviewWindowExt;
 
 mod commands;
 mod window;
@@ -36,9 +37,10 @@ pub fn run() {
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             if let Some(win) = app.get_webview_window("main") {
-                let _ = win.set_focus();
+                win.set_focus().unwrap();
             }
         }))
+        .plugin(tauri_plugin_decorum::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
@@ -49,7 +51,12 @@ pub fn run() {
         ])
         .setup(|app| {
             info!("moss app starting");
-            window::init_main_window(app)?;
+            let main_window = window::init_main_window(app).unwrap();
+
+            main_window.create_overlay_titlebar().unwrap();
+            #[cfg(target_os = "macos")]
+            main_window.set_traffic_lights_inset(16.0, 20.0).unwrap();
+
             Ok(())
         })
         .run(tauri::generate_context!())
