@@ -8,6 +8,7 @@ import { useAppStore } from "@/state/app-store";
 import { ModelSelectDialog } from "@/components/ModelSelectDialog";
 import { MODELS } from "@/lib/models";
 import { useTranslation } from "react-i18next";
+import { useAppVersion } from "@/hooks/useAppVersion";
  
 
 type Mode = "original" | "custom";
@@ -31,6 +32,7 @@ export type SidebarProps = {
 export function Sidebar({ onStart, onStop, onClear, model, setModel, scale, setScale, mode, setMode, dir, setDir, overwrite, setOverwrite }: SidebarProps) {
   const { state } = useAppStore();
   const { t } = useTranslation();
+  const appVersion = useAppVersion();
   return (
     <aside className="w-80 h-full shrink-0 border-r border-border bg-sidebar/95 p-4 flex flex-col overflow-y-auto">
       <div className="space-y-4">
@@ -71,7 +73,7 @@ export function Sidebar({ onStart, onStop, onClear, model, setModel, scale, setS
       </div>
 
       <div className="mt-auto border-t border-border/20 pt-3 flex items-center justify-between text-xs text-muted-foreground">
-        <span>v1.2.0</span>
+        <span>{appVersion ? `v${appVersion}` : ""}</span>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild>
             <a href="https://github.com/Lortunate/moss" target="_blank" rel="noopener noreferrer">{t("common.source")}</a>

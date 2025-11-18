@@ -147,23 +147,3 @@ select,
     @apply text-primary underline-offset-4 hover:underline;
   }
 }
-
-.scroll-area {
-  scrollbar-width: thin;
-  scrollbar-gutter: stable both-edges;
-}
-.scroll-area::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.scroll-area::-webkit-scrollbar-track {
-  background: transparent;
-}
-.scroll-area::-webkit-scrollbar-thumb {
-  background-color: var(--ring);
-  border-radius: var(--radius);
-  opacity: 0.35;
-}
-.scroll-area:hover::-webkit-scrollbar-thumb {
-  opacity: 0.6;
-}
