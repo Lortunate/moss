@@ -1,3 +1,5 @@
+use log::LevelFilter;
+
 mod commands;
 mod window;
 
@@ -23,6 +25,11 @@ pub fn run() {
                     Target::new(TargetKind::Stdout),
                     Target::new(TargetKind::LogDir { file_name: None }),
                 ])
+                .level(if cfg!(debug_assertions) {
+                    LevelFilter::Debug
+                } else {
+                    LevelFilter::Info
+                })
                 .build(),
         )
         .plugin(prevent_default())
