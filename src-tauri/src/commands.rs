@@ -43,9 +43,17 @@ pub async fn upscale_image(
     let res = tauri::async_runtime::spawn_blocking({
         let input_path = input_path.clone();
         let model_filename = model_filename.clone();
-        let output_dir = output_dir.clone();
         let token = token.clone();
         let handle = handle.clone();
+
+        let output_dir = if output_dir == "." {
+            std::path::Path::new(&input_path)
+                .parent()
+                .map(|p| p.to_string_lossy().to_string())
+                .unwrap_or_else(|| output_dir.clone())
+        } else {
+            output_dir.clone()
+        };
 
         move || -> Result<String, String> {
             use moss_model::{RealEsrgan, SrPipeline};
