@@ -37,6 +37,12 @@ moss-model = { path = "../moss-model" }
 cocoa = "0.26.1"
 moss-model = { path = "../moss-model", features = ["macos"] }
 
+[target."cfg(target_os = \"windows\")".dependencies]
+moss-model = { path = "../moss-model", features = ["windows"] }
+
+[target."cfg(target_os = \"linux\")".dependencies]
+moss-model = { path = "../moss-model", features = ["linux"] }
+
 [profile.dev]
 incremental = true
 
