@@ -76,16 +76,12 @@ function reducer(state: State, action: Action): State {
         images: state.images.map((i) => (i.id === action.payload.id ? { ...i, status: action.payload.status } : i)),
       };
     case "SET_IMAGE_OUTPUT": {
-      const isTauri = typeof window !== "undefined" && Boolean((window as any).__TAURI__);
       return {
         ...state,
         images: state.images.map((i) => {
           if (i.id !== action.payload.id) return i;
           const next: ImageItem = { ...i };
-          if (action.payload.src) {
-            next.src = action.payload.src;
-          } else if (action.payload.outPath) {
-            next.src = isTauri ? convertFileSrc(action.payload.outPath) : i.src;
+          if (action.payload.outPath) {
             next.resultPath = action.payload.outPath;
           }
           return next;

@@ -45,6 +45,7 @@ function GalleryItem({item, onClick, onRemove}: {
       exit={{opacity: 0, y: -6, scale: 0.98}}
       transition={{duration: 0.18}}
       whileHover={{scale: 1.015}}
+      style={{contentVisibility: "auto", containIntrinsicSize: "200px 100px"}}
     >
       <Card className="group bg-card/95 border-border/15 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
         <CardContent className="p-0">
@@ -62,6 +63,8 @@ function GalleryItem({item, onClick, onRemove}: {
               alt={item.name}
               className="absolute inset-0 h-full w-full object-cover"
               loading="lazy"
+              decoding="async"
+              fetchPriority="low"
               initial={{opacity: 0, scale: 1.01}}
               animate={{opacity: 1, scale: 1}}
               transition={{duration: 0.24}}
