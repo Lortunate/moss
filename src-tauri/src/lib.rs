@@ -36,7 +36,7 @@ pub fn run() {
         .plugin(prevent_default())
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            if let Some(win) = app.get_webview_window("main") {
+            if let Some(win) = app.get_webview_window(window::MAIN_WINDOW_LABEL) {
                 win.set_focus().unwrap();
             }
         }))

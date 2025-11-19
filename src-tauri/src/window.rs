@@ -1,7 +1,9 @@
 use tauri::{WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 
+pub const MAIN_WINDOW_LABEL: &str = "main";
+
 pub fn init_main_window(app: &tauri::App) -> tauri::Result<WebviewWindow> {
-    let mut builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
+    let mut builder = WebviewWindowBuilder::new(app, MAIN_WINDOW_LABEL, WebviewUrl::default())
         .title("moss")
         .inner_size(1360.0, 860.0)
         .min_inner_size(1200.0, 720.0)
