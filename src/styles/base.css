@@ -1,0 +1,60 @@
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+}
+
+html,
+body,
+#root {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input,
+textarea,
+select,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+@layer base {
+  h1 {
+    @apply text-3xl md:text-4xl font-semibold tracking-tight;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl font-semibold tracking-tight;
+  }
+
+  h3 {
+    @apply text-xl font-semibold tracking-tight;
+  }
+
+  h4 {
+    @apply text-lg font-medium tracking-tight;
+  }
+
+  h5 {
+    @apply text-base font-medium tracking-tight;
+  }
+
+  h6 {
+    @apply text-sm font-medium tracking-tight;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  small {
+    @apply text-sm leading-snug;
+  }
+
+  a {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+}
