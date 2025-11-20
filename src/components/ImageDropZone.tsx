@@ -73,7 +73,7 @@ export function ImageDropZone({ onAdd }: Props) {
         if (validFiles.length > 0) onAdd(validFiles);
       }
     },
-    [onAdd],
+    [onAdd, t],
   );
 
   const onDragOver = useCallback((e: React.DragEvent) => {
@@ -93,8 +93,8 @@ export function ImageDropZone({ onAdd }: Props) {
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         className={cn(
-          "flex flex-col items-center justify-center text-center rounded-md border border-dashed border-border/40 p-16 space-y-7 max-w-xl w-full",
-          isDragging && "bg-muted/10",
+          "flex flex-col items-center justify-center text-center rounded-[var(--radius)] border border-dashed border-sidebar-border/40 p-16 space-y-7 max-w-xl w-full bg-card/25 supports-[backdrop-filter]:bg-card/35 backdrop-blur-xl shadow-sm",
+          isDragging && "bg-card/35 backdrop-blur-2xl",
         )}
         initial={{ y: 6 }}
         animate={{ y: 0 }}
@@ -108,11 +108,16 @@ export function ImageDropZone({ onAdd }: Props) {
         </motion.span>
         <div className="text-xl font-medium">{t("dropzone.prompt")}</div>
         <div className="flex items-center gap-4">
-          <Button size="lg" onClick={onSelectFiles}>
+          <Button
+            size="lg"
+            variant="glass"
+            onClick={onSelectFiles}
+            className="transition-transform active:scale-[0.98]"
+          >
             <ImagePlus className="size-4 mr-2" />
             {t("dropzone.addImages")}
           </Button>
-          <Button variant="ghost" size="lg" onClick={onSelectFolder} className="text-muted-foreground">
+          <Button variant="ghost" size="lg" onClick={onSelectFolder} className="text-muted-foreground hover:text-foreground hover:bg-card/25 supports-[backdrop-filter]:hover:bg-card/35">
             <FolderOpen className="size-4 mr-2" />
             {t("dropzone.importFromFolder")}
           </Button>
