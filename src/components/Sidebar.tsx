@@ -94,7 +94,7 @@ export function Sidebar(
         className="mt-auto border-t border-sidebar-border/30 pt-3 flex items-center justify-between text-xs text-muted-foreground">
         <span>{appVersion ? `v${appVersion}` : ""}</span>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild>
+          <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground hover:bg-card/25 supports-[backdrop-filter]:hover:bg-card/35">
             <a href="https://github.com/Lortunate/moss" target="_blank"
                rel="noopener noreferrer">{t("common.source")}</a>
           </Button>

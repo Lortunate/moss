@@ -111,12 +111,12 @@ export function ImageDropZone({ onAdd }: Props) {
           <Button
             size="lg"
             onClick={onSelectFiles}
-            className="ring-1 ring-white/10 border border-white/15 !bg-white/10 supports-[backdrop-filter]:!bg-white/15 backdrop-blur-md text-foreground/90 shadow-sm transition-transform active:scale-[0.98] hover:!bg-white/20"
+            className="border border-sidebar-border/40 bg-card/25 supports-[backdrop-filter]:bg-card/35 backdrop-blur-md text-foreground shadow-sm transition-transform active:scale-[0.98] hover:bg-card/45 supports-[backdrop-filter]:hover:bg-card/55"
           >
             <ImagePlus className="size-4 mr-2" />
             {t("dropzone.addImages")}
           </Button>
-          <Button variant="ghost" size="lg" onClick={onSelectFolder} className="text-muted-foreground">
+          <Button variant="ghost" size="lg" onClick={onSelectFolder} className="text-muted-foreground hover:text-foreground hover:bg-card/25 supports-[backdrop-filter]:hover:bg-card/35">
             <FolderOpen className="size-4 mr-2" />
             {t("dropzone.importFromFolder")}
           </Button>
