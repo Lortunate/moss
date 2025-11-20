@@ -4,7 +4,7 @@ import {ChevronDown, X, Check, Download, LoaderCircle} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
-import {cn} from "@/lib/utils";
+import {cn, overlayGlass} from "@/lib/utils";
 import type {Model} from "@/lib/models";
 import {useTranslation} from "react-i18next";
 import {motion} from "framer-motion";
@@ -21,8 +21,7 @@ export function ModelSelectDialog({models, selectedId, onSelect}: Props) {
   const {available, downloading, download} = useModelAvailability(models, open);
   const {t} = useTranslation();
   const close = () => setOpen(false);
-  const overlayBg = "absolute inset-0 bg-sidebar/20 supports-[backdrop-filter]:bg-sidebar/35 backdrop-blur-xl backdrop-saturate-150";
-  const modalCard = "w-[min(90vw,700px)] md:w-[min(88vw,660px)] max-h-[80vh] rounded-[var(--radius)] border border-sidebar-border/40 bg-card/35 backdrop-blur-xl shadow-lg";
+  const modalCard = "w-[min(90vw,700px)] md:w-[min(88vw,660px)] max-h-[80vh] shadow-lg";
   const currentLabel = useMemo(() => {
     const found = models.find((m) => m.id === selectedId);
     if (found) return t(`models.${found.id}.name`, {defaultValue: found.id});
@@ -75,7 +74,7 @@ export function ModelSelectDialog({models, selectedId, onSelect}: Props) {
             exit={{opacity: 0}}
           >
             <motion.div
-              className={overlayBg}
+              className={overlayGlass}
               onClick={close}
               initial={{opacity: 0}}
               animate={{opacity: 1}}
@@ -89,13 +88,13 @@ export function ModelSelectDialog({models, selectedId, onSelect}: Props) {
               onClick={close}
             >
               <motion.div
-                className={modalCard}
                 onClick={(e) => e.stopPropagation()}
                 initial={{opacity: 0, y: 10, scale: 0.98}}
                 animate={{opacity: 1, y: 0, scale: 1}}
                 exit={{opacity: 0, y: 6, scale: 0.98}}
                 transition={{type: "spring", stiffness: 260, damping: 22}}
               >
+                <Card variant="glass" className={modalCard}>
                 <div className="flex items-center justify-between px-3 py-2.5 border-b border-sidebar-border/30">
                   <div className="text-base font-semibold">{t("model.select.label")}</div>
                   <Button
@@ -117,8 +116,9 @@ export function ModelSelectDialog({models, selectedId, onSelect}: Props) {
                       return (
                         <Card
                           key={m.id}
+                          variant="glass"
                           className={cn(
-                            "cursor-pointer select-none border-sidebar-border/40 bg-card/25 supports-[backdrop-filter]:bg-card/35 backdrop-blur-lg transition hover:bg-card/35 hover:border-sidebar-border/60 hover:shadow-md active:translate-y-[1px]",
+                            "cursor-pointer select-none transition hover:bg-card/35 hover:border-sidebar-border/60 hover:shadow-md active:translate-y-[1px]",
                             "flex flex-col h-full",
                             active && "ring-2 ring-primary/60 border-primary/50",
                           )}
@@ -178,6 +178,7 @@ export function ModelSelectDialog({models, selectedId, onSelect}: Props) {
                     })}
                   </div>
                 </div>
+                </Card>
               </motion.div>
             </div>
           </motion.div>,

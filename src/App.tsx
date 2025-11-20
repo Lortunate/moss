@@ -5,14 +5,12 @@ import {AppStoreProvider, useAppStore} from "@/state/app-store";
 import {Sidebar} from "@/components/Sidebar";
 import {Gallery} from "@/components/Gallery";
 import {useProcessing} from "@/hooks/useProcessing";
-import {useTranslation} from "react-i18next";
 import {desktopDir, join} from "@tauri-apps/api/path";
 import {ScrollArea} from "@/components/ui/scroll-area";
 
 
 function AppInner() {
   const {state, dispatch} = useAppStore();
-  useTranslation();
   const [model, setModel] = useState("real-esrgan-x4");
   const [scale, setScale] = useState(4);
   const [mode, setMode] = useState<"original" | "custom">("original");

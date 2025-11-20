@@ -6,6 +6,7 @@ import type {ImageItem} from "@/state/app-store";
 import {AnimatePresence, motion} from "framer-motion";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {createPortal} from "react-dom";
+import {overlayGlass} from "@/lib/utils";
 import {ImgComparisonSlider} from "@img-comparison-slider/react";
 import {convertFileSrc} from "@tauri-apps/api/core";
 
@@ -24,7 +25,6 @@ function GalleryItem({item, onClick, onRemove}: {
   const clickable = item.status === "complete";
   return (
     <motion.div
-      key={item.id}
       layout
       initial={{opacity: 0, y: 8, scale: 0.98}}
       animate={{opacity: 1, y: 0, scale: 1}}
@@ -34,7 +34,8 @@ function GalleryItem({item, onClick, onRemove}: {
       style={{contentVisibility: "auto", containIntrinsicSize: "200px 100px"}}
     >
       <Card
-        className="group rounded-[var(--radius)] overflow-hidden transition hover:shadow-lg bg-card/25 supports-[backdrop-filter]:bg-card/35 backdrop-blur-lg border border-sidebar-border/40 ring-1 ring-white/10">
+        variant="glass"
+        className="group overflow-hidden transition hover:shadow-lg ring-1 ring-white/10">
         <CardContent className="p-0">
           <div
             className="aspect-[16/10] w-full bg-transparent relative"
@@ -146,7 +147,7 @@ function CompareModal({selected, origSrc, resultSrc, onClose}: {
   return createPortal(
     <motion.div className="fixed inset-0 z-50" initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
       <motion.div
-        className="absolute inset-0 bg-sidebar/20 supports-[backdrop-filter]:bg-sidebar/35 backdrop-blur-xl backdrop-saturate-150"
+        className={overlayGlass}
         onClick={onClose}
         initial={{opacity: 0}}
         animate={{opacity: 1}}

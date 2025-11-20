@@ -32,7 +32,7 @@ export function OutputSettings({mode, setMode, dir, setDir, overwrite, setOverwr
   }
 
   return (
-    <Card className="bg-card/30 border border-sidebar-border/30">
+    <Card variant="glass" className="border-sidebar-border/30">
       <CardHeader>
         <CardTitle className="text-base">{t("output.title")}</CardTitle>
       </CardHeader>

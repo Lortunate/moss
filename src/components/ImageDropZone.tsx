@@ -73,7 +73,7 @@ export function ImageDropZone({ onAdd }: Props) {
         if (validFiles.length > 0) onAdd(validFiles);
       }
     },
-    [onAdd],
+    [onAdd, t],
   );
 
   const onDragOver = useCallback((e: React.DragEvent) => {
@@ -110,8 +110,9 @@ export function ImageDropZone({ onAdd }: Props) {
         <div className="flex items-center gap-4">
           <Button
             size="lg"
+            variant="glass"
             onClick={onSelectFiles}
-            className="border border-sidebar-border/40 bg-card/25 supports-[backdrop-filter]:bg-card/35 backdrop-blur-md text-foreground shadow-sm transition-transform active:scale-[0.98] hover:bg-card/45 supports-[backdrop-filter]:hover:bg-card/55"
+            className="transition-transform active:scale-[0.98]"
           >
             <ImagePlus className="size-4 mr-2" />
             {t("dropzone.addImages")}

@@ -54,7 +54,7 @@ export function Sidebar(
       <div className="space-y-4 mt-6">
         <h1 className="text-lg font-semibold tracking-tight ml-1">{t("app.title")}</h1>
 
-        <Card className="bg-card/30 border border-sidebar-border/30 shadow-none">
+        <Card variant="glass" className="border-sidebar-border/30 shadow-none">
           <CardHeader>
             <CardTitle className="text-base">{t("model.title")}</CardTitle>
           </CardHeader>
