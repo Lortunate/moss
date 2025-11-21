@@ -1,6 +1,4 @@
-import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-
 import {Slider} from "@/components/ui/slider";
 import {ProcessingControls} from "@/components/ProcessingControls";
 import {OutputSettings} from "@/components/OutputSettings";
@@ -9,6 +7,7 @@ import {ModelSelectDialog} from "@/components/ModelSelectDialog";
 import {MODELS} from "@/lib/models";
 import {useTranslation} from "react-i18next";
 import {useAppVersion} from "@/hooks/useAppVersion";
+import {SiGithub} from "@icons-pack/react-simple-icons";
 
 
 type Mode = "original" | "custom";
@@ -54,9 +53,9 @@ export function Sidebar(
       <div style={{marginTop: "24px"}} className="space-y-4">
         <h1 style={{marginLeft: "4px"}} className="text-lg font-semibold tracking-tight">{t("app.title")}</h1>
 
-        <Card className="bg-card border border-border/20">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t("model.title")}</CardTitle>
+            <CardTitle>{t("model.title")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ModelSelectDialog models={MODELS} selectedId={model} onSelect={setModel}/>
@@ -91,13 +90,18 @@ export function Sidebar(
       </div>
 
       <div
-        className="mt-auto border-t border-border/20 pt-3 flex items-center justify-between text-xs text-muted-foreground">
+        className="mt-auto pt-3 flex items-center justify-between text-sm text-muted-foreground">
         <span>{appVersion ? `v${appVersion}` : ""}</span>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild>
-            <a href="https://github.com/Lortunate/moss" target="_blank"
-               rel="noopener noreferrer">{t("common.source")}</a>
-          </Button>
+          <a
+            href="https://github.com/Lortunate/moss"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t("common.source")}
+            title={t("common.source")}
+          >
+            <SiGithub/>
+          </a>
         </div>
       </div>
     </aside>

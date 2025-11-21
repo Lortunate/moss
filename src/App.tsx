@@ -38,7 +38,7 @@ function AppInner() {
 
   return (
     <motion.div
-      className="flex h-svh overflow-hidden"
+      className="flex h-svh overflow-hidden bg-background/95"
       initial={false}
     >
       <motion.div

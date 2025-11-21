@@ -1,6 +1,5 @@
 import {Button} from "@/components/ui/button";
-import {Card, CardContent} from "@/components/ui/card";
-import {Trash2, X} from "lucide-react";
+import {Trash2} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import type {ImageItem} from "@/state/app-store";
 import {AnimatePresence, motion} from "framer-motion";
@@ -14,20 +13,6 @@ export type GalleryProps = {
   items: ImageItem[];
   onRemove: (id: string) => void;
 };
-
-function StatusBadge({status, label}: { status: ImageItem["status"]; label: string }) {
-  return (
-    <motion.div
-      key={`badge-${status}`}
-      className="absolute top-2 left-2 px-2 py-1 rounded-md bg-black/45 text-white text-xs shadow-sm ring-1 ring-white/10 backdrop-blur-sm"
-      initial={{opacity: 0}}
-      animate={{opacity: 1}}
-      exit={{opacity: 0}}
-    >
-      {label}
-    </motion.div>
-  );
-}
 
 function GalleryItem({item, onClick, onRemove}: {
   item: ImageItem;
@@ -47,66 +32,65 @@ function GalleryItem({item, onClick, onRemove}: {
       whileHover={{scale: 1.015}}
       style={{contentVisibility: "auto", containIntrinsicSize: "200px 100px"}}
     >
-      <Card className="group bg-card/95 border-border/15 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-        <CardContent className="p-0">
-          <div
-            className="aspect-[2/1] w-full bg-muted/10 relative"
-            role={clickable ? "button" : undefined}
-            aria-haspopup={clickable ? "dialog" : undefined}
-            aria-label={item.name}
-            onClick={() => {
-              if (clickable) onClick?.();
-            }}
-          >
-            <motion.img
-              src={item.src}
-              alt={item.name}
-              className="absolute inset-0 h-full w-full object-cover"
-              loading="lazy"
-              decoding="async"
-              fetchPriority="low"
-              initial={{opacity: 0, scale: 1.01}}
-              animate={{opacity: 1, scale: 1}}
-              transition={{duration: 0.24}}
-              whileHover={{scale: 1.03}}
-            />
-            <AnimatePresence mode="wait">
-              {item.status === "processing" && (
-                <StatusBadge status={item.status} label={t("status.processing")}/>
-              )}
-              {item.status === "complete" && (
-                <StatusBadge status={item.status} label={t("status.complete")}/>
-              )}
-            </AnimatePresence>
-          </div>
-          <div className="px-4 py-2 bg-card/85 border-t border-border/25">
-            <div className="text-base font-medium text-foreground truncate">{item.name}</div>
-            <div className="mt-1.5 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm">
-                <span
-                  className={
-                    `size-2 rounded-full ` +
-                    (item.status === "complete"
-                      ? "bg-green-400"
-                      : item.status === "processing"
-                        ? "bg-blue-400 animate-pulse"
-                        : item.status === "ready"
-                          ? "bg-zinc-400/60"
-                          : "bg-red-500")
-                  }
-                  style={{transition: "background-color 200ms ease"}}
-                />
-                {item.status === "processing" && (
-                  <span className="text-muted-foreground">{Math.round(item.progress ?? 0)}%</span>
-                )}
+      <div className="group rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+        <div
+          className="aspect-[16/10] w-full relative"
+          role={clickable ? "button" : undefined}
+          aria-haspopup={clickable ? "dialog" : undefined}
+          aria-label={item.name}
+          onClick={() => {
+            if (clickable) onClick?.();
+          }}
+        >
+          <motion.img
+            src={item.src}
+            alt={item.name}
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            initial={{opacity: 0, scale: 1.01}}
+            animate={{opacity: 1, scale: 1}}
+            transition={{duration: 0.24}}
+            whileHover={{scale: 1.03}}
+          />
+
+          <div className="absolute inset-x-0 bottom-0 p-2">
+            <div
+              style={{background: `color-mix(in srgb, var(--color-primary) 10%, transparent)`}}
+              className="flex items-center justify-between rounded-lg backdrop-blur-md px-3 py-2">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="text-sm font-medium text-foreground truncate">
+                  {item.name}
+                </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span
+                      className={
+                        `size-2 rounded-full transition-colors duration-200 ` +
+                        (item.status === "complete"
+                          ? "bg-green-400"
+                          : item.status === "processing"
+                            ? "bg-blue-400 animate-pulse"
+                            : item.status === "ready"
+                              ? "bg-zinc-400/60"
+                              : "bg-red-500")
+                      }
+                    />
+                  {item.status === "processing" && (
+                    <span className="text-muted-foreground">{Math.round(item.progress ?? 0)}%</span>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
                   aria-label={t("common.deleteFile")}
-                  className="h-6 w-6 rounded-md bg-card/30 hover:bg-card/40 border border-border/20 text-foreground/80 transition-transform active:scale-[0.98]"
-                  onClick={() => onRemove(item.id)}
+                  className="h-7 w-7 bg-white/10 hover:bg-white/20 text-foreground/85 transition-transform active:scale-[0.98] border-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove(item.id);
+                  }}
                   disabled={item.status !== "ready"}
                 >
                   <Trash2 className="size-3"/>
@@ -114,8 +98,8 @@ function GalleryItem({item, onClick, onRemove}: {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -159,7 +143,7 @@ function CompareModal({selected, origSrc, resultSrc, onClose}: {
   return createPortal(
     <motion.div className="fixed inset-0 z-50" initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
       <motion.div
-        className="absolute inset-0 bg-black/45 backdrop-blur-md"
+        className="absolute inset-0 bg-auto/50 backdrop-blur-sm"
         onClick={onClose}
         initial={{opacity: 0}}
         animate={{opacity: 1}}
@@ -180,12 +164,9 @@ function CompareModal({selected, origSrc, resultSrc, onClose}: {
           exit={{opacity: 0, y: 6, scale: 0.98}}
           transition={{type: "spring", stiffness: 260, damping: 22}}
         >
-          <div className="flex items-center justify-between px-3 py-2.5 border-b border-border/40">
+          <div className="flex items-center justify-center px-3 py-2.5 border-b border-border/40"
+               onClick={onClose}>
             <div className="text-base font-semibold truncate mr-2">{selected.name}</div>
-            <Button variant="ghost" size="icon" aria-label={t("common.close")} className="h-9 w-9 rounded-md"
-                    onClick={onClose}>
-              <X className="size-4"/>
-            </Button>
           </div>
           <div className="p-3 flex items-center justify-center" style={{maxHeight: "calc(92vh - 44px)"}}>
             <ImgComparisonSlider

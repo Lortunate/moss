@@ -139,19 +139,17 @@ export function ModelSelectDialog({models, selectedId, onSelect}: Props) {
                             </p>
                             <div className="flex flex-wrap gap-2 sm:self-start">
                               {scene ? (
-                                <Badge variant="outline" className="border-border/50">
+                                <Badge variant={"default"}>
                                   {t(`models.scenes.${scene}`, {defaultValue: scene})}
                                 </Badge>
                               ) : null}
                               <Button
-                                variant="outline"
-                                size="icon"
+                                variant="outline" size="icon" className="rounded-full"
                                 aria-label={available[m.id]
                                   ? t("model.available", {defaultValue: "Available"})
                                   : (downloading[m.id]
                                     ? t("model.downloading", {defaultValue: "Downloading…"})
                                     : t("model.download", {defaultValue: "Download"}))}
-                                className="h-8 w-8"
                                 disabled={available[m.id] || downloading[m.id]}
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -162,9 +160,9 @@ export function ModelSelectDialog({models, selectedId, onSelect}: Props) {
                                 }}
                               >
                                 {available[m.id] ? (
-                                  <Check className="h-4 w-4 text-primary"/>
+                                  <Check className="h-4 w-4"/>
                                 ) : downloading[m.id] ? (
-                                  <LoaderCircle className="h-4 w-4 animate-spin"/>
+                                  <LoaderCircle className="h-4 w-4"/>
                                 ) : (
                                   <Download className="h-4 w-4"/>
                                 )}
