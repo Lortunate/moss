@@ -1,15 +1,50 @@
-import { useCallback, useRef } from "react";
-import { useAppStore, type ImageItem } from "@/state/app-store";
-import { processImage, cancelProcessing } from "@/lib/image";
-import { listen, type Event } from "@tauri-apps/api/event";
+import {useCallback, useRef} from "react";
+import {useAppStore, type ImageItem} from "@/state/app-store";
+import {processImage, cancelProcessing} from "@/lib/image";
+import {listen, type Event} from "@tauri-apps/api/event";
+import {
+  isPermissionGranted,
+  requestPermission,
+  sendNotification,
+} from "@tauri-apps/plugin-notification";
 
 export type ProcessingOptions = {
   outputDir?: string;
   overwrite?: boolean;
 };
+
 export function useProcessing() {
-  const { state, dispatch } = useAppStore();
+  const {state, dispatch} = useAppStore();
   const stopRequestedRef = useRef<boolean>(false);
+  const notify = useCallback(async (message: string) => {
+    let granted = await isPermissionGranted();
+    if (!granted) {
+      const perm = await requestPermission();
+      granted = perm === "granted";
+    }
+    if (granted) sendNotification(message);
+  }, []);
+
+  const setImageStatus = useCallback(
+    (id: string, status: "ready" | "processing" | "complete" | "error") => {
+      dispatch({type: "SET_IMAGE_STATUS", payload: {id, status}});
+    },
+    [dispatch]
+  );
+
+  const setImageProgress = useCallback(
+    (id: string, progress: number) => {
+      dispatch({type: "SET_IMAGE_PROGRESS", payload: {id, progress}});
+    },
+    [dispatch]
+  );
+
+  const setImageOutput = useCallback(
+    (id: string, outPath: string) => {
+      dispatch({type: "SET_IMAGE_OUTPUT", payload: {id, outPath}});
+    },
+    [dispatch]
+  );
 
   const startProcessing = useCallback(
     async (model: string, scale: number, options: ProcessingOptions) => {
@@ -22,16 +57,26 @@ export function useProcessing() {
         overwrite: options.overwrite,
       });
       stopRequestedRef.current = false;
-      dispatch({ type: "RESET_IMAGE_STATUSES" });
-      dispatch({ type: "SET_PROCESSING", payload: true });
+      dispatch({type: "RESET_IMAGE_STATUSES"});
+      dispatch({type: "SET_PROCESSING", payload: true});
       let unlistenFn: (() => void) | null = null;
+      const total = state.images.length;
+      void notify(`Upscale started: ${total} image${total > 1 ? "s" : ""}`);
+      let completed = 0;
+      let failed = 0;
       try {
-        unlistenFn = await listen("processing_progress", (evt: Event<{ imageId: string; progress: number }>) => {
-          const payload = evt.payload as { imageId: string; progress: number };
-          if (payload) {
-            dispatch({ type: "SET_IMAGE_PROGRESS", payload: { id: payload.imageId, progress: payload.progress } });
+        unlistenFn = await listen(
+          "processing_progress",
+          (evt: Event<{ imageId: string; progress: number }>) => {
+            const payload = evt.payload as {
+              imageId: string;
+              progress: number;
+            };
+            if (payload) {
+              setImageProgress(payload.imageId, payload.progress);
+            }
           }
-        });
+        );
         const items = [...state.images];
         for (const img of items) {
           if (stopRequestedRef.current) {
@@ -43,46 +88,69 @@ export function useProcessing() {
             name: img.name,
             path: img.path,
           });
-          dispatch({ type: "SET_IMAGE_STATUS", payload: { id: img.id, status: "processing" } });
+          setImageStatus(img.id, "processing");
           try {
             const res = await processImage(img as ImageItem, model, scale, {
               outputDir: options.outputDir,
               overwrite: options.overwrite,
             });
             if (res.outPath) {
-              dispatch({ type: "SET_IMAGE_OUTPUT", payload: { id: img.id, outPath: res.outPath } });
-              dispatch({ type: "SET_IMAGE_STATUS", payload: { id: img.id, status: "complete" } });
-              console.info("[Moss] completed", { id: img.id, outPath: res.outPath });
+              setImageOutput(img.id, res.outPath);
+              setImageStatus(img.id, "complete");
+              completed += 1;
+              console.info("[Moss] completed", {
+                id: img.id,
+                outPath: res.outPath,
+              });
             } else {
-              dispatch({ type: "SET_IMAGE_STATUS", payload: { id: img.id, status: "error" } });
-              console.warn("[Moss] no outPath returned", { id: img.id });
+              setImageStatus(img.id, "error");
+              failed += 1;
+              console.warn("[Moss] no outPath returned", {id: img.id});
             }
           } catch (e) {
-            dispatch({ type: "SET_IMAGE_STATUS", payload: { id: img.id, status: "error" } });
-            console.error("[Moss] processing failed", { id: img.id, error: e });
+            setImageStatus(img.id, "error");
+            failed += 1;
+            console.error("[Moss] processing failed", {id: img.id, error: e});
           }
         }
       } finally {
-        dispatch({ type: "SET_PROCESSING", payload: false });
+        dispatch({type: "SET_PROCESSING", payload: false});
         if (typeof unlistenFn === "function") {
-          try { unlistenFn(); } catch {}
+          try {
+            unlistenFn();
+          } catch {
+          }
         }
         console.info("[Moss] processing finished");
+        if (stopRequestedRef.current) {
+          void notify(`Upscale stopped: ${completed} done, ${failed} failed`);
+        } else {
+          void notify(`Upscale finished: ${completed} done, ${failed} failed`);
+        }
       }
     },
-    [state.images, dispatch]
+    [
+      state.images,
+      dispatch,
+      setImageProgress,
+      setImageStatus,
+      setImageOutput,
+      notify,
+    ]
   );
 
-  const stopProcessing = useCallback(() => {
+  const stopProcessing = useCallback(async () => {
     stopRequestedRef.current = true;
     void cancelProcessing();
-  }, []);
+    void notify("Upscale canceled.");
+  }, [notify]);
 
   const removeImage = useCallback(
     (id: string) => {
       const target = state.images.find((i) => i.id === id);
-      if (target && target.src.startsWith("blob:")) URL.revokeObjectURL(target.src);
-      dispatch({ type: "REMOVE_IMAGE", payload: id });
+      if (target && target.src.startsWith("blob:"))
+        URL.revokeObjectURL(target.src);
+      dispatch({type: "REMOVE_IMAGE", payload: id});
     },
     [state.images, dispatch]
   );
@@ -91,8 +159,8 @@ export function useProcessing() {
     for (const img of state.images) {
       if (img.src.startsWith("blob:")) URL.revokeObjectURL(img.src);
     }
-    dispatch({ type: "CLEAR_IMAGES" });
+    dispatch({type: "CLEAR_IMAGES"});
   }, [state.images, dispatch]);
 
-  return { startProcessing, stopProcessing, removeImage, clearImages };
+  return {startProcessing, stopProcessing, removeImage, clearImages};
 }
