@@ -95,7 +95,7 @@ export function ModelSelectDialog({models, selectedId, onSelect}: Props) {
                 transition={{type: "spring", stiffness: 260, damping: 22}}
               >
                 <div className="flex items-center justify-between px-3 py-2.5 border-b border-border/40">
-                  <div className="text-base font-semibold">{t("model.select.label")}</div>
+                  <div className="text-base font-semibold text-foreground">{t("model.select.label")}</div>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -103,7 +103,7 @@ export function ModelSelectDialog({models, selectedId, onSelect}: Props) {
                     className="h-9 w-9 rounded-md"
                     onClick={close}
                   >
-                    <X className="size-4"/>
+                    <X className="size-4 text-foreground"/>
                   </Button>
                 </div>
 

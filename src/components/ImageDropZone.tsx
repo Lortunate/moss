@@ -119,7 +119,7 @@ export function ImageDropZone({onAdd}: Props) {
             <EmptyMedia variant="icon">
               <ImagePlus className="size-12 text-muted-foreground"/>
             </EmptyMedia>
-            <EmptyTitle className="text-xl">
+            <EmptyTitle className="text-xl text-foreground">
               {t("dropzone.prompt")}
             </EmptyTitle>
           </EmptyHeader>

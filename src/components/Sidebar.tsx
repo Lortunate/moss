@@ -51,7 +51,7 @@ export function Sidebar(
   return (
     <aside className="w-80 h-full shrink-0 border-r border-border bg-sidebar/95 p-4 flex flex-col overflow-y-auto">
       <div style={{marginTop: "24px"}} className="space-y-4">
-        <h1 style={{marginLeft: "4px"}} className="text-lg font-semibold tracking-tight">{t("app.title")}</h1>
+        <h1 style={{marginLeft: "4px"}} className="text-lg font-semibold tracking-tight text-foreground">{t("app.title")}</h1>
 
         <Card>
           <CardHeader>

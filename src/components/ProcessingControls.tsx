@@ -46,7 +46,7 @@ export function ProcessingControls({canStart, onStart, isProcessing, onStop, onC
         )}
       </AnimatePresence>
       <Button variant={"ghost"} size={"lg"}
-              className="w-full rounded-[var(--radius)] text-[15px] transition-transform active:scale-[0.98]"
+              className="w-full rounded-[var(--radius)] text-[15px] transition-transform active:scale-[0.98] text-muted-foreground"
               onClick={onClear} disabled={isProcessing || !canStart}>
         {t("common.clearAll", {defaultValue: "Clear All"})}
       </Button>

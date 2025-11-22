@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import "@/lib/i18n";
+import {ThemeProvider} from "@/components/ThemeProvider.tsx";
 
 const showWindowWhenReady = async () => {
   if (typeof window !== "undefined" && (window as any).__TAURI__) {
@@ -17,7 +18,9 @@ const showWindowWhenReady = async () => {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App/>
+    <ThemeProvider defaultTheme={"system"}>
+      <App/>
+    </ThemeProvider>
   </React.StrictMode>,
 );
 
