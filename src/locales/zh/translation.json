@@ -26,6 +26,29 @@
       "current": "当前：{{value}}x"
     }
   },
+  "settings": {
+    "nav": {
+      "appearance": "外观"
+    },
+    "appearance": {
+      "title": "外观",
+      "theme": {
+        "label": "主题",
+        "description": "选择应用主题",
+        "placeholder": "选择主题"
+      },
+      "mode": {
+        "label": "外观模式",
+        "description": "选择浅色、深色或跟随系统",
+        "placeholder": "选择模式",
+        "options": {
+          "system": "系统",
+          "light": "浅色",
+          "dark": "深色"
+        }
+      }
+    }
+  },
   "output": {
     "title": "输出",
     "location": "位置",

@@ -1,9 +1,11 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useEffect, useState} from "react";
 import {useTheme} from "@/components/ThemeProvider.tsx";
+import {useTranslation} from "react-i18next";
 
 export default function Settings() {
   const {theme: darkMode, setTheme} = useTheme();
+  const {t} = useTranslation();
   const [appTheme, setAppTheme] = useState<string>(() => {
     try {
       return localStorage.getItem("theme") || "default";
@@ -39,25 +41,25 @@ export default function Settings() {
               }`}
               onClick={() => setActive("appearance")}
             >
-              Appearance
+              {t("settings.nav.appearance", {defaultValue: "Appearance"})}
             </button>
           </nav>
         </aside>
         <main className="p-5 h-full overflow-y-auto">
           {active === "appearance" && (
             <div className="space-y-6">
-              <div className="text-base font-semibold">Appearance</div>
+              <div className="text-base font-semibold">{t("settings.appearance.title", {defaultValue: "Appearance"})}</div>
               <div className="rounded-md border border-border bg-secondary/30 overflow-hidden">
                 <div className="divide-y divide-border">
                   <div className="p-4 grid grid-cols-[1fr_auto] items-center gap-3">
                     <div>
-                      <div className="text-sm font-medium">Theme</div>
-                      <div className="text-xs text-muted-foreground">Select application theme</div>
+                      <div className="text-sm font-medium">{t("settings.appearance.theme.label", {defaultValue: "Theme"})}</div>
+                      <div className="text-xs text-muted-foreground">{t("settings.appearance.theme.description", {defaultValue: "Select application theme"})}</div>
                     </div>
                     <div className="ml-auto min-w-[160px] w-[200px] md:w-[220px]">
                       <Select value={appTheme} onValueChange={setAppTheme}>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select theme"/>
+                          <SelectValue placeholder={t("settings.appearance.theme.placeholder", {defaultValue: "Select theme"})}/>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="default">Default</SelectItem>
@@ -70,18 +72,18 @@ export default function Settings() {
                   </div>
                   <div className="p-4 grid grid-cols-[1fr_auto] items-center gap-3">
                     <div>
-                      <div className="text-sm font-medium">Appearance Mode</div>
-                      <div className="text-xs text-muted-foreground">Choose light, dark or follow system</div>
+                      <div className="text-sm font-medium">{t("settings.appearance.mode.label", {defaultValue: "Appearance Mode"})}</div>
+                      <div className="text-xs text-muted-foreground">{t("settings.appearance.mode.description", {defaultValue: "Choose light, dark or follow system"})}</div>
                     </div>
                     <div className="ml-auto min-w-[160px] w-[200px] md:w-[220px]">
                       <Select value={darkMode} onValueChange={setTheme}>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select mode"/>
+                          <SelectValue placeholder={t("settings.appearance.mode.placeholder", {defaultValue: "Select mode"})}/>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="system">System</SelectItem>
-                          <SelectItem value="light">Light</SelectItem>
-                          <SelectItem value="dark">Dark</SelectItem>
+                          <SelectItem value="system">{t("settings.appearance.mode.options.system", {defaultValue: "System"})}</SelectItem>
+                          <SelectItem value="light">{t("settings.appearance.mode.options.light", {defaultValue: "Light"})}</SelectItem>
+                          <SelectItem value="dark">{t("settings.appearance.mode.options.dark", {defaultValue: "Dark"})}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

@@ -29,6 +29,29 @@
       "current": "Current: {{value}}x"
     }
   },
+  "settings": {
+    "nav": {
+      "appearance": "Appearance"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "theme": {
+        "label": "Theme",
+        "description": "Select application theme",
+        "placeholder": "Select theme"
+      },
+      "mode": {
+        "label": "Appearance Mode",
+        "description": "Choose light, dark or follow system",
+        "placeholder": "Select mode",
+        "options": {
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        }
+      }
+    }
+  },
   "output": {
     "title": "Output",
     "location": "Location",
