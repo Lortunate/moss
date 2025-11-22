@@ -1,8 +1,8 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useTheme} from "@/components/ThemeProvider.tsx";
 import {useTranslation} from "react-i18next";
-import { i18n as i18nInstance, setLanguage } from "@/lib/i18n";
+import { i18n as i18nInstance } from "@/lib/i18n";
 import { useTauriStore } from "@/hooks/useTauriStore";
 
 export default function Settings() {
@@ -15,16 +15,6 @@ export default function Settings() {
     i18nInstance.language?.startsWith("zh") ? "zh" : "en",
     { validate: (v: unknown): v is string => v === "en" || v === "zh" || v === "system" }
   );
-
-  useEffect(() => {
-    const el = document.documentElement;
-    if (appTheme && appTheme !== "default") el.setAttribute("data-theme", appTheme);
-    else el.removeAttribute("data-theme");
-  }, [appTheme]);
-
-  useEffect(() => {
-    setLanguage(lang as "en" | "zh" | "system");
-  }, [lang]);
 
   return (
     <div className="h-svh bg-background text-foreground">

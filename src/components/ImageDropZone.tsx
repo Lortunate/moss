@@ -83,9 +83,6 @@ export function ImageDropZone({onAdd}: Props) {
   );
 
   useEffect(() => {
-    const isTauri = typeof window !== "undefined" && (window as any).__TAURI__;
-    if (!isTauri) return;
-
     const unlistenEnter = listen("tauri://drag-enter", () => {
       setDragging(true);
     });

@@ -10,14 +10,12 @@ import { listen } from "@tauri-apps/api/event";
 import { setLanguage } from "@/lib/i18n";
 
 const showWindowWhenReady = async () => {
-  if (typeof window !== "undefined" && (window as any).__TAURI__) {
-    const {getCurrentWindow} = await import("@tauri-apps/api/window");
-    requestAnimationFrame(() => {
-      getCurrentWindow().show().catch((e) => {
-        console.error(e);
-      });
+  const {getCurrentWindow} = await import("@tauri-apps/api/window");
+  requestAnimationFrame(() => {
+    getCurrentWindow().show().catch((e) => {
+      console.error(e);
     });
-  }
+  });
 };
 
 function Root() {
