@@ -34,7 +34,8 @@ pub fn init_settings_window(handle: &AppHandle) -> tauri::Result<WebviewWindow> 
         WebviewUrl::App("index.html#/settings".into()),
     )
     .title("Settings")
-    .inner_size(560.0, 540.0)
+    .inner_size(640.0, 540.0)
+    .min_inner_size(640.0, 540.0)
     .resizable(false)
     .minimizable(false)
     .maximized(false)

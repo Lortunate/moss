@@ -1,5 +1,4 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Switch} from "@/components/ui/switch";
 import {useEffect, useState} from "react";
 import {useTheme} from "@/components/ThemeProvider.tsx";
 
@@ -55,7 +54,7 @@ export default function Settings() {
                       <div className="text-sm font-medium">Theme</div>
                       <div className="text-xs text-muted-foreground">Select application theme</div>
                     </div>
-                    <div className="ml-auto min-w-[200px] w-[240px]">
+                    <div className="ml-auto min-w-[160px] w-[200px] md:w-[220px]">
                       <Select value={appTheme} onValueChange={setAppTheme}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select theme"/>
@@ -71,13 +70,21 @@ export default function Settings() {
                   </div>
                   <div className="p-4 grid grid-cols-[1fr_auto] items-center gap-3">
                     <div>
-                      <div className="text-sm font-medium">Dark Mode</div>
-                      <div className="text-xs text-muted-foreground">Use dark appearance for UI</div>
+                      <div className="text-sm font-medium">Appearance Mode</div>
+                      <div className="text-xs text-muted-foreground">Choose light, dark or follow system</div>
                     </div>
-                    <Switch
-                      checked={darkMode === "dark"}
-                      onCheckedChange={(v) => setTheme(v ? "dark" : "light")}
-                    />
+                    <div className="ml-auto min-w-[160px] w-[200px] md:w-[220px]">
+                      <Select value={darkMode} onValueChange={setTheme}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select mode"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="system">System</SelectItem>
+                          <SelectItem value="light">Light</SelectItem>
+                          <SelectItem value="dark">Dark</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
               </div>
