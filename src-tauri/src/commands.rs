@@ -1,3 +1,4 @@
+use crate::window::SETTINGS_WINDOW_LABEL;
 use log::{error, info};
 use serde_json::json;
 use std::fs;
@@ -356,4 +357,14 @@ pub async fn cancel_upscale(state: State<'_, ProcessingState>) -> Result<(), Str
     } else {
         Err("no active task".to_string())
     }
+}
+#[tauri::command]
+pub fn open_settings_window(handle: tauri::AppHandle) -> Result<(), String> {
+    if let Some(win) = handle.get_webview_window(SETTINGS_WINDOW_LABEL) {
+        win.show().unwrap();
+        win.set_focus().unwrap();
+    }
+
+    crate::window::init_settings_window(&handle).map_err(|e| e.to_string())?;
+    Ok(())
 }

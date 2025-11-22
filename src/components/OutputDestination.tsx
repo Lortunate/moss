@@ -10,7 +10,7 @@ import {open} from "@tauri-apps/plugin-dialog";
 
 type Mode = "original" | "custom";
 
-export type OutputSettingsProps = {
+export type OutputDestinationProps = {
   mode: Mode;
   setMode: (m: Mode) => void;
   dir: string;
@@ -19,7 +19,7 @@ export type OutputSettingsProps = {
   setOverwrite: (v: boolean) => void;
 };
 
-export function OutputSettings({mode, setMode, dir, setDir, overwrite, setOverwrite}: OutputSettingsProps) {
+export function OutputDestination({mode, setMode, dir, setDir, overwrite, setOverwrite}: OutputDestinationProps) {
   const {t} = useTranslation();
 
   async function chooseDir() {

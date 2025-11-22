@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {ThemeProvider as NextThemeProvider, useTheme as useNextTheme} from "next-themes";
 
 type Theme = "dark" | "light" | "system";
@@ -14,6 +14,26 @@ export function ThemeProvider({
   defaultTheme = "system",
   storageKey = "vite-ui-theme",
 }: ThemeProviderProps) {
+  useEffect(() => {
+    const apply = () => {
+      try {
+        const t = localStorage.getItem("theme") || "default";
+        const el = document.documentElement;
+        if (t && t !== "default") {
+          el.setAttribute("data-theme", t);
+        } else {
+          el.removeAttribute("data-theme");
+        }
+      } catch {}
+    };
+    apply();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "theme") apply();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   return (
     <NextThemeProvider
       attribute="class"

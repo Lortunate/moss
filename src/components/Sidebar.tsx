@@ -1,13 +1,16 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Slider} from "@/components/ui/slider";
+import {Button} from "@/components/ui/button";
 import {ProcessingControls} from "@/components/ProcessingControls";
-import {OutputSettings} from "@/components/OutputSettings";
+import {OutputDestination} from "@/components/OutputDestination";
 import {useAppStore} from "@/state/app-store";
 import {ModelSelectDialog} from "@/components/ModelSelectDialog";
 import {MODELS} from "@/lib/models";
 import {useTranslation} from "react-i18next";
 import {useAppVersion} from "@/hooks/useAppVersion";
 import {SiGithub} from "@icons-pack/react-simple-icons";
+import {Settings as SettingsIcon} from "lucide-react";
+import {invoke} from "@tauri-apps/api/core";
 
 
 type Mode = "original" | "custom";
@@ -48,10 +51,24 @@ export function Sidebar(
   const {state} = useAppStore();
   const {t} = useTranslation();
   const appVersion = useAppVersion();
+  const openPreferences = async () => {
+    try {
+      await invoke("open_settings_window");
+    } catch (e) {
+      console.error(e);
+    }
+  };
   return (
     <aside className="w-80 h-full shrink-0 border-r border-border bg-sidebar/95 p-4 flex flex-col overflow-y-auto">
       <div style={{marginTop: "24px"}} className="space-y-4">
-        <h1 style={{marginLeft: "4px"}} className="text-lg font-semibold tracking-tight text-foreground">{t("app.title")}</h1>
+        <div className="flex items-center justify-between">
+          <h1 style={{marginLeft: "4px"}}
+              className="text-lg font-semibold tracking-tight text-foreground">{t("app.title")}</h1>
+          <Button variant="ghost" size="icon" aria-label="Open Settings" onClick={openPreferences}
+                  className="text-muted-foreground">
+            <SettingsIcon className="size-4"/>
+          </Button>
+        </div>
 
         <Card>
           <CardHeader>
@@ -82,8 +99,8 @@ export function Sidebar(
           </CardContent>
         </Card>
 
-        <OutputSettings mode={mode} setMode={setMode} dir={dir} setDir={setDir} overwrite={overwrite}
-                        setOverwrite={setOverwrite}/>
+        <OutputDestination mode={mode} setMode={setMode} dir={dir} setDir={setDir} overwrite={overwrite}
+                            setOverwrite={setOverwrite}/>
 
         <ProcessingControls canStart={state.images.length > 0} onStart={onStart} isProcessing={state.isProcessing}
                             onStop={onStop} onClear={onClear}/>

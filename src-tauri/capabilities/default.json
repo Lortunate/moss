@@ -3,7 +3,8 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": [
-    "main"
+    "main",
+    "settings"
   ],
   "permissions": [
     "core:default",
@@ -11,6 +12,8 @@
     "dialog:default",
     "window-state:default",
     "fs:default",
+    "core:window:allow-show",
+    "core:window:allow-create",
     "core:window:default",
     "core:window:allow-close",
     "core:window:allow-center",

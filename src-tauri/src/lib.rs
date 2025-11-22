@@ -52,17 +52,12 @@ pub fn run() {
             commands::upscale_image,
             commands::cancel_upscale,
             commands::check_model_available,
-            commands::download_model
+            commands::download_model,
+            commands::open_settings_window
         ])
         .setup(|app| {
             info!("moss app starting");
-            let main_window = window::init_main_window(app).unwrap();
-
-            main_window.create_overlay_titlebar().unwrap();
-            #[cfg(target_os = "macos")]
-            {
-                main_window.set_traffic_lights_inset(16.0, 20.0).unwrap();
-            }
+            window::init_main_window(app).unwrap();
 
             Ok(())
         })

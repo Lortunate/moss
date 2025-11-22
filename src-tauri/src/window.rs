@@ -1,6 +1,8 @@
-use tauri::{WebviewUrl, WebviewWindow, WebviewWindowBuilder};
+use tauri::{AppHandle, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
+use tauri_plugin_decorum::WebviewWindowExt;
 
 pub const MAIN_WINDOW_LABEL: &str = "main";
+pub const SETTINGS_WINDOW_LABEL: &str = "settings";
 
 pub fn init_main_window(app: &tauri::App) -> tauri::Result<WebviewWindow> {
     let mut builder = WebviewWindowBuilder::new(app, MAIN_WINDOW_LABEL, WebviewUrl::default())
@@ -16,5 +18,42 @@ pub fn init_main_window(app: &tauri::App) -> tauri::Result<WebviewWindow> {
             .title_bar_style(tauri::TitleBarStyle::Overlay)
     }
 
-    builder.build()
+    let win = builder.build()?;
+    win.create_overlay_titlebar()?;
+
+    #[cfg(target_os = "macos")]
+    win.set_traffic_lights_inset(16.0, 20.0)?;
+
+    Ok(win)
+}
+
+pub fn init_settings_window(handle: &AppHandle) -> tauri::Result<WebviewWindow> {
+    let mut builder = WebviewWindowBuilder::new(
+        handle,
+        SETTINGS_WINDOW_LABEL,
+        WebviewUrl::App("index.html#/settings".into()),
+    )
+    .title("Settings")
+    .inner_size(560.0, 540.0)
+    .resizable(false)
+    .minimizable(false)
+    .maximized(false)
+    .maximizable(false)
+    .visible(true);
+
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder
+            .transparent(true)
+            .hidden_title(true)
+            .title_bar_style(tauri::TitleBarStyle::Overlay)
+    }
+
+    let win = builder.build()?;
+    win.create_overlay_titlebar()?;
+
+    #[cfg(target_os = "macos")]
+    win.set_traffic_lights_inset(16.0, 20.0)?;
+
+    Ok(win)
 }
