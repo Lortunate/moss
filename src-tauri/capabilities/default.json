@@ -25,6 +25,11 @@
     "core:window:allow-start-dragging",
     "core:window:allow-toggle-maximize",
     "decorum:allow-show-snap-overlay",
-    "notification:default"
+    "notification:default",
+    "store:default",
+    "store:allow-get",
+    "store:allow-set",
+    "store:allow-save",
+    "store:allow-load"
   ]
 }

@@ -2,31 +2,29 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {useEffect, useState} from "react";
 import {useTheme} from "@/components/ThemeProvider.tsx";
 import {useTranslation} from "react-i18next";
+import { i18n as i18nInstance, setLanguage } from "@/lib/i18n";
+import { useTauriStore } from "@/hooks/useTauriStore";
 
 export default function Settings() {
   const {theme: darkMode, setTheme} = useTheme();
   const {t} = useTranslation();
-  const [appTheme, setAppTheme] = useState<string>(() => {
-    try {
-      return localStorage.getItem("theme") || "default";
-    } catch {
-      return "default";
-    }
-  });
+  const [appTheme, setAppTheme] = useTauriStore<string>("theme", "default");
   const [active, setActive] = useState<string>("appearance");
+  const [lang, setLang] = useTauriStore<string>(
+    "lang",
+    i18nInstance.language?.startsWith("zh") ? "zh" : "en",
+    { validate: (v: unknown): v is string => v === "en" || v === "zh" || v === "system" }
+  );
 
   useEffect(() => {
     const el = document.documentElement;
-    if (appTheme && appTheme !== "default") {
-      el.setAttribute("data-theme", appTheme);
-    } else {
-      el.removeAttribute("data-theme");
-    }
-    try {
-      localStorage.setItem("theme", appTheme);
-    } catch {
-    }
+    if (appTheme && appTheme !== "default") el.setAttribute("data-theme", appTheme);
+    else el.removeAttribute("data-theme");
   }, [appTheme]);
+
+  useEffect(() => {
+    setLanguage(lang as "en" | "zh" | "system");
+  }, [lang]);
 
   return (
     <div className="h-svh bg-background text-foreground">
@@ -36,7 +34,7 @@ export default function Settings() {
           <nav className="p-2 space-y-1">
             <button
               type="button"
-              className={`w-full text-left px-2.5 py-2 rounded-md transition-colors ${
+              className={`w-full text-left text-sm px-2.5 py-2 rounded-md transition-colors ${
                 active === "appearance" ? "bg-primary/10 text-foreground" : "hover:bg-muted"
               }`}
               onClick={() => setActive("appearance")}
@@ -86,13 +84,31 @@ export default function Settings() {
                           <SelectItem value="dark">{t("settings.appearance.mode.options.dark", {defaultValue: "Dark"})}</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
+                  </div>
+                </div>
+                <div className="p-4 grid grid-cols-[1fr_auto] items-center gap-3">
+                  <div>
+                    <div className="text-sm font-medium">{t("settings.appearance.language.label", {defaultValue: "Language"})}</div>
+                    <div className="text-xs text-muted-foreground">{t("settings.appearance.language.description", {defaultValue: "Select display language"})}</div>
+                  </div>
+                  <div className="ml-auto min-w-[160px] w-[200px] md:w-[220px]">
+                    <Select value={lang} onValueChange={setLang}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={t("settings.appearance.language.placeholder", {defaultValue: "Select language"})}/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="system">{t("settings.appearance.language.options.system")}</SelectItem>
+                        <SelectItem value="en">English</SelectItem>
+                        <SelectItem value="zh">中文</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
             </div>
-          )}
-        </main>
+          </div>
+        )}
+      </main>
       </div>
     </div>
   );

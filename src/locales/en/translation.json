@@ -49,6 +49,14 @@
           "light": "Light",
           "dark": "Dark"
         }
+      },
+      "language": {
+        "label": "Language",
+        "description": "Select display language",
+        "placeholder": "Select language",
+        "options": {
+          "system": "System"
+        }
       }
     }
   },

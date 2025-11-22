@@ -1,5 +1,4 @@
 use log::LevelFilter;
-use tauri_plugin_decorum::WebviewWindowExt;
 
 mod commands;
 mod window;
@@ -35,6 +34,7 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(log_plugin())
+        .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             if let Some(win) = app.get_webview_window(window::MAIN_WINDOW_LABEL) {
                 win.set_focus().unwrap();

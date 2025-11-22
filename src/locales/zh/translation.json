@@ -46,6 +46,14 @@
           "light": "浅色",
           "dark": "深色"
         }
+      },
+      "language": {
+        "label": "语言",
+        "description": "选择显示语言",
+        "placeholder": "选择语言",
+        "options": {
+          "system": "系统"
+        }
       }
     }
   },
