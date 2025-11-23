@@ -7,19 +7,54 @@
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "bun run build",
-    "frontendDist": "../dist"
+    "frontendDist": "../dist",
+    "removeUnusedCommands": true
   },
   "app": {
+    "macOSPrivateApi": true,
+    "withGlobalTauri": true,
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost",
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["**"]
+      }
+    },
     "windows": [
       {
+        "label": "main",
+        "url": "index.html",
         "title": "moss",
-        "width": 800,
-        "height": 600
+        "shadow": true,
+        "width": 1360,
+        "height": 860,
+        "minHeight": 1200,
+        "minWidth": 760,
+        "transparent": true,
+        "hiddenTitle": true,
+        "titleBarStyle": "Overlay",
+        "scrollBarStyle": "fluentOverlay",
+        "visible": false
+      },
+      {
+        "label": "settings",
+        "url": "index.html#settings",
+        "title": "Settings",
+        "shadow": true,
+        "width": 640,
+        "height": 540,
+        "minHeight": 640,
+        "minWidth": 540,
+        "resizable": false,
+        "minimizable": false,
+        "maximizable": false,
+        "transparent": true,
+        "hiddenTitle": true,
+        "titleBarStyle": "Overlay",
+        "scrollBarStyle": "fluentOverlay",
+        "visible": false
       }
-    ],
-    "security": {
-      "csp": null
-    }
+    ]
   },
   "bundle": {
     "active": true,
@@ -30,6 +65,10 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "resources": {
+      "../models/*": "models",
+      "libs": "."
+    }
   }
 }
